@@ -1,0 +1,526 @@
+\documentclass[11pt,a4paper]{article}
+
+% Paquetes esenciales
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{float}
+
+% Configuración de colores y enlaces
+\definecolor{udacolor}{RGB}{0, 102, 51}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=udacolor,
+    citecolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+    pdftitle={Informe Arquitectura CubeSat UD34},
+}
+
+\titleformat{\section}{\Large\bfseries\color{udacolor}}{\thesection.}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection.}{1em}{}
+
+\begin{document}
+
+% ==========================================
+% 1. PORTADA E IDENTIFICACIÓN
+% ==========================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge \textbf{\color{udacolor} Universidad de Antioquia}}\\[0.5cm]
+    {\LARGE Facultad de Ingeniería}\\[0.5cm]
+    {\Large Departamento de Ingeniería Electrónica y Telecomunicaciones}\\[2cm]
+    
+    {\huge \textbf{Práctica 4: Diseño Electrónico y Captura Esquemática del CubeSat UD34}}\\[2cm]
+    
+    {\Large \textbf{Integrantes:}}\\[0.5cm]
+    {\large Juan Pablo González Blandón - juan.gonzalez57@udea.edu.co}\\[0.2cm]
+    {\large Santiago Castaño Loaiza - santiago.castano2@udea.edu.co}\\[2cm]
+    
+    {\Large \textbf{Curso:}}\\[0.5cm]
+    {\large Diseño de Productos Electrónicos}\\[2cm]
+    
+    \vfill
+    {\large Medellín, Colombia}\\[0.2cm]
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ==========================================
+% 1. ALCANCE Y ESPECIFICACIONES DE LA TARJETA
+% ==========================================
+\section{Revisión del alcance y especificaciones de la tarjeta (PCB 2: Aviónica y ADCS)}
+
+\subsection{Identificación de Funciones Asignadas}
+La \textbf{PCB 2} constituye el núcleo de procesamiento y determinación de actitud del nanosatélite UD34. De acuerdo con la arquitectura general definida en la Práctica 3, sus funciones ineludibles son:
+\begin{itemize}
+    \item \textbf{Procesamiento de Datos (OBC):} Ejecución del Sistema Operativo en Tiempo Real (RTOS), orquestación de rutinas de acceso directo a memoria (DMA) para el volcado de imágenes y empaquetamiento bajo el estándar CCSDS.
+    \item \textbf{Almacenamiento Masivo:} Provisión de interfaces síncronas de alta velocidad para memoria volátil (búfer de ráfaga) y memoria no volátil (registro histórico de misión).
+    \item \textbf{Determinación y Control de Actitud (ADCS):} Adquisición de variables inerciales y magnéticas (IMU) y síntesis de señales PWM de control hacia los puentes H que excitan las bobinas de torque (Magnetorquers).
+\end{itemize}
+
+\subsection{Trazabilidad de Requisitos y Fronteras Eléctricas}
+Para garantizar el determinismo y evitar incompatibilidades con el resto del ensamble 1U, se establecen las siguientes restricciones físicas y eléctricas.
+
+\textbf{Tensiones de Alimentación y Corrientes:}
+\begin{itemize}
+    \item \textbf{Lógica y Control:} $3.3\text{V}$ (dominio digital) y $5.0\text{V}$ provenientes de los convertidores de la PCB 1 (EPS). Consumo estimado nominal de $100\text{ mA}$ y picos de $250\text{ mA}$ durante el uso del DMA.
+    \item \textbf{Potencia Actuadores:} Enrutamiento de $V_{BATT}$ (rango $7.4\text{V} - 8.4\text{V}$) directo desde el EPS, el cual alimentará los puentes H para inyectar picos transitorios de corriente requeridos por los Magnetorquers (estimados en $\ge 1.0\text{ A}$ a $1.5\text{ A}$ por eje).
+\end{itemize}
+
+\textbf{Asignación de Interfaces Físicas (Conectores):}
+\begin{itemize}
+    \item \textbf{Stack Central (Backplane PC/104):} Conector estandarizado \textit{through-hole} de apilamiento vertical que entrelaza la PCB 1 (EPS) y la PCB 3 (COMM). Agrupa los rieles de potencia, telemetría I2C (IF-05) y el enlace SPI de bajada de imágenes hacia el radio de Banda S (IF-04).
+    \item \textbf{Carga Útil (Conector Mezzanine):} Conector superficial de alta densidad que apilará la cámara multiespectral (PCB 4) directamente sobre la PCB 2. Aisla el bus DCMI (IF-01) del ruido del PC/104 para transferir la ráfaga de imágenes crudas ($\ge 40\text{ MB/s}$ - Requisito ET-01).
+\end{itemize}
+
+\subsection{Resolución de Asuntos Pendientes y Modificaciones}
+Durante la evaluación detallada de las interfaces, se detectó una vulnerabilidad crítica: la conmutación inductiva de alta corriente (1.5 A) de los puentes H del ADCS inducirá picos de tensión en el plano de tierra (\textit{Ground Bounce}), amenazando la integridad del bus DCMI de alta velocidad del microcontrolador y el registro de la SDRAM.
+
+\textbf{Cambio Documentado:} Se descartan las topologías tradicionales de tierra compartida o \textit{Star Grounding}. Se integrará una arquitectura de \textbf{Aislamiento Galvánico Digital} en la PCB 2.
+
+\textbf{Justificación Técnica y Efectos en el Sistema:}
+Se implementará un aislador digital capacitivo (Texas Instruments ISO7741) y un módulo DC-DC de aislamiento galvánico de $1\text{ W}$ (Texas Instruments DCP010505BP) entre el procesador principal y la etapa del puente H (DRV8833). 
+\begin{itemize}
+    \item \textbf{Pros:} Anula físicamente el ruido de los Magnetorquers al desconectar la tierra digital (\texttt{DGND}) de la tierra de potencia (\texttt{PGND}), protegiendo el bus DCMI de fallos lógicos. A diferencia de un optoacoplador, el aislador capacitivo es inmune a la degradación por "Daño de Desplazamiento" radiónico en órbita baja (LEO) \cite{nasa_sst}.
+    \item \textbf{Contras y Mitigación:} Exigirá sacrificar un área estimada de $2\text{ a }3\text{ cm}^2$ en la PCB 2 para alojar el conversor aislado e incrementar levemente el consumo general. Se ajustarán las reglas de ruteo para respetar el margen físico de aislamiento en la tarjeta.
+\end{itemize}
+
+% ==========================================
+% 2. SELECCIÓN DE COMPONENTES
+% ==========================================
+```latex
+% ==========================================
+% 3. SELECCIÓN DE COMPONENTES
+% ==========================================
+\section{Selección de componentes}
+
+La selección de componentes de la PCB 2, destinada al procesamiento de
+datos y al control de actitud, considera las interfaces requeridas, los
+rangos de alimentación, el consumo, el encapsulado y la disponibilidad
+comercial. Se priorizan componentes COTS (\textit{Commercial Off-The-Shelf})
+por su integración y disponibilidad; sin embargo, su utilización no
+implica por sí misma una calificación para operación espacial. Su
+compatibilidad con el entorno de la misión deberá evaluarse según los
+requisitos térmicos, mecánicos y de radiación aplicables.
+
+\subsection{Componentes principales}
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.35}
+\small
+\begin{tabularx}{\textwidth}{
+|>{\raggedright\arraybackslash}p{2.6cm}
+|>{\raggedright\arraybackslash}p{3.0cm}
+|X|}
+\hline
+\textbf{Función} & \textbf{Referencia seleccionada} &
+\textbf{Justificación, condiciones y aspectos por verificar} \\
+\hline
+
+Procesamiento central &
+STM32H753IIT6 &
+Microcontrolador basado en ARM Cortex-M7, con frecuencia máxima de
+480 MHz, 2 MB de memoria Flash y 1 MB de RAM interna. Integra
+interfaces como SPI, I\textsuperscript{2}C, UART y FMC, útiles para
+la conexión de periféricos y memorias externas. La frecuencia de
+operación definitiva debe justificarse según la carga de procesamiento,
+el consumo, el reloj seleccionado y los límites eléctricos del
+dispositivo. Se deben dimensionar los circuitos de alimentación,
+reinicio, arranque y depuración a partir de la hoja de datos. \\
+\hline
+
+Memoria volátil externa &
+ISSI IS42S16400J-7TL &
+SDRAM síncrona de 64 Mbit, equivalente a 8 MiB, con bus de datos de
+16 bits. Su interfaz paralela permite utilizar el controlador FMC del
+microcontrolador. La temporización debe configurarse a partir de los
+parámetros AC de la referencia exacta y de la frecuencia del reloj
+de memoria. El sufijo de velocidad no debe interpretarse por sí solo
+como el tiempo de acceso. Se deben verificar la temperatura de
+operación, los requisitos de refresco y los niveles de alimentación. \\
+\hline
+
+Memoria no volátil &
+Kingston EMMC04G-M627-A01 &
+Memoria eMMC de 4 GB con controlador interno, apropiada para
+almacenamiento masivo. La referencia admite una alimentación VCC
+de 2,7--3,6 V y distintas opciones de VCCQ, según el modo de
+operación. Para el diseño se considera inicialmente VCC de 3,3 V
+y VCCQ de 1,8 V, sujeto a verificar la compatibilidad con la interfaz
+y la configuración del host. No se asume tolerancia a radiación por
+el hecho de incorporar mecanismos internos de gestión de errores. \\
+\hline
+
+Unidad de medición inercial &
+TDK InvenSense ICM-20948 &
+Integra acelerómetro, giroscopio y magnetómetro en un dispositivo
+MEMS de nueve ejes, con comunicación digital SPI o I\textsuperscript{2}C.
+Su integración reduce el número de componentes externos y facilita
+la estimación de orientación. El fabricante identifica esta referencia
+como EOL (\textit{End of Life}), por lo que su disponibilidad representa
+un riesgo para la fabricación y el mantenimiento. Se conserva como
+referencia inicial, teniendo en cuenta dicho riesgo. \\
+\hline
+
+Control de actuadores &
+Texas Instruments DRV8833 &
+Integra dos puentes H para controlar cargas inductivas. Su rango de
+alimentación de motor es de 2,7--10,8 V. La corriente utilizable depende
+del encapsulado, la temperatura y el diseño térmico. La corriente
+objetivo de cada bobina debe determinarse antes de confirmar que
+este driver sea adecuado. Para tres ejes de actuación independientes
+se debe verificar la cantidad de puentes H necesarios y la asignación
+de señales de control. \\
+\hline
+
+Aislamiento digital &
+Texas Instruments ISO7741 &
+Aislador digital de cuatro canales, con tres canales en una dirección
+y uno en la dirección opuesta. Admite niveles lógicos dentro del
+rango especificado por el fabricante, pero no integra una fuente de
+alimentación aislada. La selección final depende del mapa de señales,
+del número de canales requeridos y de los requisitos de aislamiento
+del diseño. \\
+\hline
+
+Conversión DC-DC aislada &
+Texas Instruments DCP010505BP &
+Convertidor DC-DC aislado de salida nominal de 5 V y potencia nominal
+de hasta 1 W para la variante correspondiente. Su capacidad debe
+verificarse frente a la carga real del dominio aislado. No se considera
+como fuente de potencia para las bobinas, debido a que su capacidad
+de salida puede resultar insuficiente para la corriente requerida por
+los actuadores. \\
+\hline
+\end{tabularx}
+\caption{Componentes principales considerados para la PCB 2.}
+\label{tab:componentes_pcb2}
+\end{table}
+
+\subsection{Criterios complementarios de selección}
+
+La selección de los componentes pasivos y auxiliares se realizará
+conforme a las hojas de datos y a las condiciones de operación
+previstas para cada circuito:
+
+\begin{itemize}
+    \item \textbf{Desacoplamiento:} se consideran condensadores
+    cerámicos próximos a los pines de alimentación de los circuitos
+    integrados. Sus valores y cantidades se definirán según las
+    recomendaciones del fabricante y los transitorios previstos.
+    La capacidad de reserva de la etapa de potencia se dimensionará
+    por separado.
+
+    \item \textbf{Relojes:} se considera inicialmente un cristal HSE
+    de 25 MHz y, si los requisitos del sistema lo justifican, un
+    cristal LSE de 32,768 kHz para el RTC. La selección definitiva
+    depende de la capacitancia de carga, la tolerancia, el rango
+    térmico y las recomendaciones del oscilador del microcontrolador.
+
+    \item \textbf{Buses digitales:} las resistencias de polarización
+    de I\textsuperscript{2}C se calculan a partir de la tensión del
+    bus, la corriente de hundimiento admisible y la capacitancia total
+    de las líneas. Las resistencias serie para señales rápidas se
+    definirán según las características eléctricas y el trazado de
+    la PCB, evitando adoptar valores genéricos sin verificación.
+
+    \item \textbf{Configuración y depuración:} se prevén conexiones
+    para programación, reinicio y selección del modo de arranque del
+    STM32. Los pines no utilizados se tratarán según las indicaciones
+    del fabricante, evitando entradas flotantes cuando no estén
+    permitidas.
+
+    \item \textbf{Compatibilidad eléctrica:} se comprobarán las
+    tensiones de alimentación y los niveles lógicos de cada interfaz,
+    especialmente la compatibilidad entre VCCQ de la eMMC y el
+    microcontrolador, así como las conexiones entre los dominios
+    aislados.
+\end{itemize}
+
+
+% ==========================================
+% 4. DISEÑO Y DIMENSIONAMIENTO
+% ==========================================
+\section{Diseño y dimensionamiento de circuitos}
+
+El dimensionamiento de los circuitos de soporte busca establecer
+valores compatibles con las condiciones de operación recomendadas
+por los fabricantes y con los requisitos funcionales de la PCB 2.
+Los cálculos se plantean a partir de los parámetros eléctricos
+disponibles y de las hipótesis iniciales de diseño.
+
+\subsection{Alimentación y dominios eléctricos}
+
+Se considera como punto de partida una batería de dos celdas de
+ion-litio conectadas en serie, con una tensión nominal de 7,4 V y
+una tensión máxima de 8,4 V. Para el diseño preliminar se adopta
+un intervalo de entrada de 6,0--8,4 V, cuya compatibilidad con la
+batería y su límite de descarga deberá mantenerse como condición
+de diseño.
+
+A partir de este bus se contempla un dominio lógico de 3,3 V para
+el microcontrolador y los periféricos compatibles. Las memorias y
+los sensores se alimentarán de acuerdo con sus rangos especificados,
+utilizando regulación adicional cuando sea necesaria.
+
+El dominio de los actuadores deberá mantenerse galvánicamente
+aislado del dominio lógico. Para ello, se requiere aislamiento de
+las señales de control y una fuente de alimentación aislada
+dimensionada según la potencia de la carga. El ISO7741 se utiliza
+para el aislamiento digital, mientras que el convertidor DC-DC se
+seleccionará de acuerdo con los requisitos de corriente y tensión
+del dominio aislado.
+
+El DCP010505BP no se asigna como fuente de alimentación directa
+de los magnetorquers, debido a que su potencia nominal de salida
+es de hasta 1 W. La fuente definitiva para los actuadores deberá
+cubrir la demanda eléctrica calculada de las bobinas y las pérdidas
+del convertidor.
+
+\subsection{Dimensionamiento de la red de reloj HSE}
+
+Para dimensionar los condensadores de carga de un cristal externo,
+se utiliza la relación:
+
+\[
+C_L =
+\frac{C_1 C_2}{C_1+C_2}+C_{\mathrm{stray}},
+\]
+
+donde \(C_L\) es la capacitancia de carga especificada por el
+fabricante del cristal, \(C_1\) y \(C_2\) son los condensadores
+externos y \(C_{\mathrm{stray}}\) representa la capacitancia parásita
+del circuito.
+
+Si se utiliza una capacitancia externa simétrica,
+\(C_1=C_2=C_{\mathrm{ext}}\), entonces:
+
+\[
+C_{\mathrm{ext}}=2(C_L-C_{\mathrm{stray}}).
+\]
+
+Como cálculo preliminar, considerando una capacitancia de carga
+del cristal de \(C_L=8\,\mathrm{pF}\) y una capacitancia parásita
+estimada de \(C_{\mathrm{stray}}=2\,\mathrm{pF}\), se obtiene:
+
+\[
+C_{\mathrm{ext}}=2(8-2)\,\mathrm{pF}
+=12\,\mathrm{pF}.
+\]
+
+Por tanto, se considera inicialmente un condensador de \(12\,\mathrm{pF}\)
+en cada terminal del cristal, con dieléctrico C0G/NP0. Esta selección
+queda condicionada a confirmar la referencia exacta del cristal,
+su capacitancia de carga y las recomendaciones del oscilador HSE
+del STM32H753.
+
+\subsection{Resistencias de polarización del bus I\textsuperscript{2}C}
+
+El valor de las resistencias de polarización depende de la tensión
+del bus, la corriente de hundimiento permitida por los dispositivos
+y la capacitancia total de las líneas. Para un cálculo preliminar,
+se emplean:
+
+\[
+R_{p(\min)}=\frac{V_{CC}-V_{OL}}{I_{OL}}
+\]
+
+y
+
+\[
+R_{p(\max)}=\frac{t_r}{0.8473\,C_b},
+\]
+
+donde \(V_{OL}\) es la tensión de nivel bajo, \(I_{OL}\) la corriente
+de hundimiento admisible, \(t_r\) el tiempo de subida máximo y
+\(C_b\) la capacitancia total del bus.
+
+Considerando \(V_{CC}=3.3\,\mathrm{V}\), \(V_{OL}=0.4\,\mathrm{V}\),
+\(I_{OL}=3\,\mathrm{mA}\), \(t_r=300\,\mathrm{ns}\) y
+\(C_b=50\,\mathrm{pF}\), se obtiene:
+
+\[
+R_{p(\min)}=
+\frac{3.3-0.4}{3\,\mathrm{mA}}
+\approx 967\,\Omega
+\]
+
+\[
+R_{p(\max)}=
+\frac{300\,\mathrm{ns}}
+{0.8473(50\,\mathrm{pF})}
+\approx 7.08\,\mathrm{k}\Omega.
+\]
+
+Bajo estas condiciones, se propone inicialmente una resistencia
+de \(4.7\,\mathrm{k}\Omega\), que se encuentra dentro del intervalo
+calculado. Su aceptación final depende de confirmar la capacitancia
+real del bus, el modo de operación y los límites eléctricos de
+todos los dispositivos conectados.
+
+\subsection{Dimensionamiento de los magnetorquers y la etapa de potencia}
+
+Para iniciar el dimensionamiento de los magnetorquers se adopta
+como objetivo preliminar un momento dipolar de
+\(0.07\,\mathrm{A\,m^2}\) por eje, tomado como referencia de diseño
+para un CubeSat de clase 1U y no como un requisito oficial confirmado
+de la misión UD34.
+
+El momento dipolar de una bobina puede aproximarse mediante:
+
+\[
+m=NIA_{\mathrm{ef}},
+\]
+
+donde \(N\) es el número de espiras, \(I\) la corriente de la bobina
+y \(A_{\mathrm{ef}}\) el área efectiva por espira. El par magnético
+generado en el campo magnético terrestre se expresa como:
+
+\[
+\boldsymbol{\tau}=\boldsymbol{m}\times\boldsymbol{B},
+\]
+
+donde \(\boldsymbol{B}\) es el campo magnético local.
+
+Para una bobina implementada mediante pistas de cobre en la PCB,
+la resistencia eléctrica inicial se estima con:
+
+\[
+R=\rho\frac{\ell}{wt},
+\]
+
+donde \(\rho\) es la resistividad del cobre, \(\ell\) la longitud
+total de la pista, \(w\) su ancho y \(t\) el espesor del cobre.
+La potencia disipada por efecto Joule y la tensión resistiva en
+régimen estacionario se calculan mediante:
+
+\[
+P_{\mathrm{Cu}}=I^2R,
+\qquad
+V_R=IR.
+\]
+
+Se propone una configuración de tres ejes magnéticos independientes.
+Para lograrlo, la geometría debe permitir componentes del momento
+dipolar en tres direcciones; tres bobinas coplanares no generan
+por sí solas tres ejes independientes.
+
+El objetivo dipolar adoptado permite establecer una referencia
+inicial, pero la corriente, la resistencia, la inductancia y la
+potencia de cada bobina dependen de su geometría física, número
+de espiras, ancho y espesor de las pistas. Por esta razón, dichos
+parámetros deberán obtenerse a partir de la geometría definitiva
+de la PCB antes de confirmar la capacidad del DRV8833.
+
+La corriente admisible del driver deberá verificarse para el
+encapsulado seleccionado, considerando la resistencia de conducción,
+la disipación térmica y las condiciones de operación. Si se emplea
+una resistencia de sensado, su valor se calculará a partir del
+umbral y la función de sensado o regulación de corriente indicada
+por el fabricante. No se fija un valor definitivo de \textit{shunt}
+sin haber establecido previamente la corriente objetivo de la bobina.
+
+\subsection{Presupuesto de consumo de la PCB 2}
+
+El consumo de cada dominio se calcula a partir de la tensión de
+alimentación y la corriente correspondiente al estado de operación:
+
+\[
+P_i=V_iI_i.
+\]
+
+Cuando se utiliza un convertidor, la potencia requerida en su
+entrada depende de la potencia suministrada a la carga y de su
+eficiencia:
+
+\[
+P_{\mathrm{entrada}}=\frac{P_{\mathrm{carga}}}{\eta},
+\]
+
+donde \(\eta\) representa la eficiencia del convertidor.
+
+Para el presupuesto de la PCB 2 se distinguen los siguientes estados:
+
+\begin{itemize}
+    \item \textbf{Estado nominal:} microcontrolador ejecutando el
+    software de control, sensores activos, memorias en operación
+    habitual e interfaces digitales habilitadas según el modo de
+    misión.
+
+    \item \textbf{Estado de máxima demanda previsto:} procesamiento
+    y transferencias de memoria activas, operaciones de escritura
+    en la eMMC, comunicaciones habilitadas y actuación de los
+    magnetorquers según la estrategia de control.
+
+    \item \textbf{Estado de reposo:} periféricos deshabilitados o
+    en bajo consumo, según la configuración de cada componente.
+    La corriente de reposo de los convertidores y del dominio
+    aislado también debe incluirse cuando corresponda.
+\end{itemize}
+
+Las corrientes nominales y máximas deberán obtenerse de las hojas
+de datos para las condiciones correspondientes de tensión,
+frecuencia, temperatura y actividad. La corriente de los actuadores
+se calculará a partir de las bobinas dimensionadas y no únicamente
+de la corriente máxima admisible del driver. Asimismo, las
+corrientes máximas de los componentes no se sumarán como si
+ocurrieran simultáneamente sin verificar que dicho estado sea
+posible en la operación prevista.
+
+Por lo anterior, no se asigna todavía un valor numérico definitivo
+a la potencia total de la PCB 2. El presupuesto deberá integrar
+las corrientes verificadas de los circuitos digitales, las pérdidas
+de conversión y la potencia calculada de los magnetorquers.
+
+\subsection{Configuración de arranque, depuración y tratamiento de pines}
+
+Para garantizar la fiabilidad del sistema embebido y facilitar las pruebas terrestres, se definen las siguientes políticas de diseño a nivel esquemático:
+
+\begin{itemize}
+    \item \textbf{Condiciones de arranque (\textit{Boot}):} Para evitar que un evento singular (SEU) altere la secuencia de inicio, el pin \texttt{BOOT0} del STM32H753 se fijará a tierra (\texttt{DGND}) mediante una resistencia \textit{pull-down} de $10\,\mathrm{k\Omega}$. Esto asegura un arranque determinista exclusivamente desde la memoria Flash principal.
+    \item \textbf{Programación y Depuración:} Se implementará una interfaz \textbf{SWD (Serial Wire Debug)} de 4 pines (\texttt{SWDIO}, \texttt{SWCLK}, \texttt{VDD}, \texttt{GND}). Esta topología minimiza el uso de pines respecto al estándar JTAG, reservando puertos GPIO para el enrutamiento de la carga útil.
+    \item \textbf{Tratamiento de pines no utilizados:} Los pines sobrantes del microcontrolador permanecerán físicamente desconectados en la PCB para optimizar el área de enrutamiento. Su mitigación contra acoplamientos electromagnéticos se delegará al \textit{firmware} de inicialización (configurándolos como entradas con \textit{pull-down} o salidas analógicas).
+    \item \textbf{Puntos de prueba (\textit{Test Points}):} Se preverán superficies de cobre expuestas (Pads tipo \textit{Test Point}) en señales críticas para la validación funcional: niveles de voltaje aislados (\texttt{3.3V\_Iso}), línea de reinicio de hardware (\texttt{NRST}), voltajes de capacitores internos del núcleo (\texttt{VCAP}) y las señales PWM de excitación del puente H.
+\end{itemize}
+
+\subsection*{Nota sobre el carácter preliminar del diseño}
+
+Los componentes seleccionados, los valores calculados y las
+estimaciones presentadas corresponden a una etapa previa al diseño
+físico de la PCB, la definición definitiva de sus dimensiones y
+capas, y el enrutamiento de las pistas. Por tanto, constituyen una
+base inicial de diseño y pueden estar sujetos a modificaciones
+durante la captura esquemática, la simulación, el análisis de
+integridad de señal y el diseño del circuito impreso.
+
+En particular, el dimensionamiento definitivo de los magnetorquers
+y el cierre del presupuesto de consumo dependen de la geometría
+final de las bobinas, las características físicas de las pistas de
+cobre y la confirmación del momento dipolar requerido por la misión.
+Estos parámetros deberán verificarse antes de considerar cerrados
+el diseño eléctrico y la selección de la etapa de potencia.
+```
+
+
+% ==========================================
+% REFERENCIAS
+% ==========================================
+\begin{thebibliography}{99}
+\bibitem{ecss} European Cooperation for Space Standardization (ECSS), \textit{ECSS-E-ST-20-20C: Electrical design and interface requirements for power supply}, 2022.
+\bibitem{nasa_sst} NASA, \textit{State-of-the-Art Small Spacecraft Technology: Communications and Hardware Systems}, 2026.
+\end{thebibliography}
+
+\end{document}

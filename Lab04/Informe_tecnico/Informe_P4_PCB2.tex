@@ -1,0 +1,320 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{spanish}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{pdfpages}
+\usepackage{url}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\definecolor{udacolor}{RGB}{0, 102, 51}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=udacolor,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={Informe Práctica 4 - PCB 2 (OBC y ADCS) - CubeSat UD34},
+}
+\urlstyle{same}
+\setlength{\emergencystretch}{3em}
+
+\titleformat{\section}{\Large\bfseries\color{udacolor}}{\thesection.}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection.}{1em}{}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge \textbf{\color{udacolor} Universidad de Antioquia}}\\[0.5cm]
+    {\LARGE Facultad de Ingeniería}\\[0.5cm]
+    {\Large Departamento de Ingeniería Electrónica y Telecomunicaciones}\\[2cm]
+    {\huge \textbf{Práctica 4: Diseño Electrónico y Captura Esquemática del CubeSat UD34}}\\[0.6cm]
+    {\Large PCB 2 --- Aviónica (OBC) y control de actitud (ADCS)}\\[2cm]
+    {\Large \textbf{Integrantes:}}\\[0.5cm]
+    {\large Juan Pablo González Blandón --- juan.gonzalez57@udea.edu.co}\\[0.2cm]
+    {\large Santiago Castaño Loaiza --- santiago.castano2@udea.edu.co}\\[2cm]
+    {\Large \textbf{Curso:}}\\[0.3cm]
+    {\large Laboratorio de Diseño de Productos Electrónicos}\\[1cm]
+    {\large Proyecto Altium: \texttt{PCB2\_OBC\_ADCS.PrjPcb} (Altium Designer 26.9.1)}\\
+    \vfill
+    {\large Medellín, Colombia --- 27 de octubre de 2026}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Resumen del estado de la entrega}
+
+Este informe documenta el diseño \textbf{tal como quedó capturado} en el esquemático entregado (cinco hojas: \texttt{Top\_Level}, \texttt{U\_OBC\_Core}, \texttt{U\_Mass\_Storage}, \texttt{U\_ADCS\_Isolated} y \texttt{U\_Interfaces\_Connectors}). Donde el esquemático difiere de lo previsto en la Práctica 3 o en una versión anterior del informe, la diferencia se declara como \emph{desviación} (Sección~\ref{sec:desv}) y no se oculta.
+
+Resultado de la verificación: el error fatal de la compilación (\emph{Missing Harness Type on Signal Harness}), los designadores duplicados y el nombre de red duplicado \texttt{FMC\_SDNE0} fueron corregidos. \textbf{Persisten} los mensajes de \emph{Net has only one pin} y \emph{floating input pins} en \texttt{U\_Mass\_Storage}, porque las señales FMC, SDIO y DCMI no están conectadas a pines del STM32H753. Se aceptan como excepción documentada (sin desactivar el ERC) y se listan como trabajo pendiente para la siguiente revisión. En consecuencia, \textbf{el esquemático no está eléctricamente completo} y no debe considerarse listo para fabricación.
+
+Los cálculos, la BOM, los costos y la matriz de restricciones están en la hoja de cálculo \texttt{UD34\_PCB2\_Calculos\_BOM\_Costos.xlsx} (anexa en el repositorio); las tablas de este informe se generaron a partir de ella para mantener la coherencia.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Alcance y especificaciones de la tarjeta}
+
+\subsection{Funciones asignadas}
+La PCB 2 es el núcleo de procesamiento y determinación de actitud del nanosatélite UD34. Sus funciones, según la arquitectura de la Práctica 3, son:
+\begin{itemize}
+    \item \textbf{Procesamiento de datos (OBC):} ejecución de un RTOS, orquestación de DMA para el volcado de imágenes y empaquetamiento de datos. El software no se implementa en esta práctica; el hardware debe ofrecer los recursos necesarios.
+    \item \textbf{Almacenamiento masivo:} SDRAM externa por FMC como búfer de ráfaga y eMMC por SDIO como registro de misión.
+    \item \textbf{Control de actitud (ADCS):} generación de señales PWM hacia un puente H que excita las bobinas (magnetorquers). \emph{En este esquemático se implementan dos ejes (X e Y)}; la adquisición inercial (IMU) y el eje Z quedan pendientes (desviaciones D-04 y D-05).
+\end{itemize}
+
+\subsection{Interfaces con el resto del CubeSat}
+La Tabla~\ref{tab:interfaces} resume las interfaces tal como existen en el esquemático. Los conectores son símbolos genéricos de cabecera; no se ha seleccionado aún el conector PC/104 ni el mezzanine previstos en la arquitectura (D-12).
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Conector} & \textbf{Hoja} & \textbf{Señales (según esquemático)} \\ \hline
+J2 (\texttt{J\_EPS}), 3 pines & Interfaces & 1: \texttt{MAIN\_BUS\_POWER}; 2: \texttt{3V3\_DIGITAL}; 3: \texttt{DGND} \\ \hline
+P1 (\texttt{J\_PAYLOAD}), 5 pines & Interfaces & 1: \texttt{SPI\_NSS}; 2: \texttt{SPI\_SCK}; 3: \texttt{SPI\_MISO}; 4: \texttt{SPI\_MOSI}; 5: \texttt{DGND} \\ \hline
+P2 (\texttt{J\_CAMERA}), 16 pines & Interfaces & 1--8: \texttt{D0}--\texttt{D7}; 9: \texttt{PCLK}; 10: \texttt{HSYNC}; 11: \texttt{VSYNC}; 12: \texttt{I2C\_SDA}; 13: \texttt{I2C\_SCL}; 14: \texttt{3V3\_DIGITAL}; 15, 16: \texttt{DGND} \\ \hline
+P3 (\texttt{J\_TELEM}), 4 pines & Interfaces & 1: \texttt{DGND}; 2: \texttt{3V3\_DIGITAL}; 3: \texttt{I2C\_SCL}; 4: \texttt{I2C\_SDA} (orden a confirmar en el símbolo) \\ \hline
+J3 (\texttt{J\_COIL\_X}), 2 pines & Interfaces & \texttt{AOUT1}, \texttt{AOUT2} \\ \hline
+J4 (\texttt{J\_COIL\_Y}), 2 pines & Interfaces & \texttt{BOUT1}, \texttt{BOUT2} \\ \hline
+J1 (\texttt{53259-0429}), 4 pines & OBC\_Core & \texttt{3V3\_DIGITAL}, \texttt{SWCLK}, \texttt{SWDIO}, \texttt{DGND} (depuración SWD) \\ \hline
+\end{tabularx}
+\caption{Conectores del esquemático entregado.}
+\label{tab:interfaces}
+\end{table}
+
+\subsection{Cambio documentado respecto de la Práctica 3: aislamiento galvánico}
+La conmutación de las bobinas (corrientes del orden de 1--1{,}5~A) puede inducir ruido en la referencia de tierra y afectar al microcontrolador y a la memoria. Se adoptó un \textbf{aislamiento galvánico digital}: un aislador capacitivo (ISO7741) separa \texttt{DGND} (lado del microcontrolador) de \texttt{PGND} (lado del puente H DRV8833).
+\begin{itemize}
+    \item \textbf{Ventajas:} desacopla el retorno de potencia del dominio digital; el aislador capacitivo no sufre la degradación por daño de desplazamiento propia de los optoacopladores en entornos de radiación \cite{nasa_sst}.
+    \item \textbf{Costos:} más área de tarjeta, más consumo y un convertidor DC-DC aislado para el lado de potencia (previsto: DCP010505BP). \emph{Este convertidor no está capturado en el esquemático} (D-03).
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Selección de componentes}
+
+Se priorizan componentes comerciales (COTS). Su uso no implica calificación para vuelo espacial; el alcance académico del proyecto lo declara explícitamente. La Tabla~\ref{tab:comp} recoge los componentes principales \emph{del esquemático}, las alternativas consideradas y la justificación.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{|p{2.2cm}|p{3.0cm}|p{3.0cm}|X|}
+\hline
+\textbf{Función} & \textbf{Seleccionado} & \textbf{Alternativas} & \textbf{Justificación y puntos por verificar} \\ \hline
+Procesamiento & STM32H753IIT6 (LQFP-176) & STM32H743, STM32H750 & Cortex-M7 a 480~MHz, 2~MB de Flash y 1~MB de RAM; periféricos FMC, SDMMC, DCMI, SPI e I\textsuperscript{2}C necesarios para el sistema. Frecuencia final y consumo dependen de la carga de software. \\ \hline
+SDRAM & Micron MT48LC4M16A2P-6A (64~Mbit, 3{,}3~V, TSOP-II 54) & ISSI IS42S16400J (previsto en versión anterior) & Interfaz SDRAM síncrona de 16 bits compatible con FMC. Los distribuidores la muestran como \emph{Last Time Buy} con fecha 30/06/2026 ya vencida: la disponibilidad es un riesgo y debe evaluarse una alternativa. \\ \hline
+Memoria no volátil & Kingston EMMC04G-M627-A01 (4~GB, FBGA-153) & Otras eMMC 4~GB & VCC 2{,}7--3{,}6~V; en el esquemático \texttt{VCC} y \texttt{VCCQ} están a 3{,}3~V (la versión anterior del informe suponía VCCQ de 1{,}8~V). Encapsulado BGA que condiciona el apilamiento (Sección~\ref{sec:fab}). \\ \hline
+Aislamiento digital & TI ISO7741DWR (SOIC-16 DW, 5~kV\textsubscript{rms}) & ISO7740 (4 canales en el mismo sentido) & Tiene 3 canales en un sentido y 1 en el contrario: \textbf{solo caben tres de las cuatro señales PWM}. Para las cuatro señales hace falta el ISO7740 (D-02). \\ \hline
+Puente H & TI DRV8833PWPR (HTSSOP-16) & DRV8837, DRV8871 & Dos puentes H, \texttt{VM} 2{,}7--10{,}8~V; cubre dos bobinas. La corriente utilizable depende de la bobina, de \texttt{VM} y de la disipación térmica; no se ha calculado porque no se definió la resistencia de las bobinas. \\ \hline
+Reloj HSE & Abracon ABM3B-25.000MHZ-B4U-T & --- & Cristal de 25~MHz para el oscilador del STM32. La capacitancia de carga debe verificarse (Sección~\ref{sec:calc}). \\ \hline
+IMU & \emph{No incluida} (previsto ICM-20948) & --- & Referencia en estado EOL según el fabricante; pendiente (D-04). \\ \hline
+DC-DC aislado & \emph{No incluido} (previsto DCP010505BP, 1~W) & --- & No sirve para alimentar las bobinas por su potencia; solo para el lado aislado lógico (D-03). \\ \hline
+\end{tabularx}
+\caption{Componentes principales del esquemático y alternativas.}
+\label{tab:comp}
+\end{table}
+
+\paragraph{Componentes pasivos y de soporte.} Se usan resistencias de 0603 (10~k$\Omega$ para \texttt{BOOT0}, 4{,}7~k$\Omega$ para \emph{pull-ups} I\textsuperscript{2}C, 33~$\Omega$ en serie en las cuatro líneas SPI), condensadores cerámicos 0402/0603 para el reloj, \texttt{VCAP} y reinicio, y los conectores de la Tabla~\ref{tab:interfaces}. Para las referencias exactas véase la BOM (Sección~\ref{sec:bom}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Diseño y dimensionamiento de circuitos}\label{sec:calc}
+
+Los cálculos están en la hoja \texttt{Calculos} del libro de cálculo; aquí se resumen con sus supuestos.
+
+\subsection{Alimentación y dominios}
+El dominio lógico es \texttt{3V3\_DIGITAL}, que llega al STM32, a la SDRAM, a la eMMC, al lado 1 del aislador y a los conectores. En el esquemático, el lado aislado usa la etiqueta \texttt{5V\_ISO} para \texttt{VCC2} del ISO7741 y para \texttt{VM} del DRV8833, pero \textbf{no hay ninguna fuente que genere esa red} (D-03). La versión anterior del informe preveía alimentar el puente H desde $V_{BATT}$ (7{,}4--8{,}4~V) y usar el DCP010505BP solo para el lado aislado lógico; esa arquitectura no está capturada.
+
+El consumo digital heredado del informe anterior (estimado, sin verificar con hojas de datos) es 100~mA nominal y 250~mA pico a 3{,}3~V, es decir, 0{,}33~W y 0{,}825~W ($P=VI$). El consumo de las bobinas no se calcula porque su resistencia no está definida.
+
+\subsection{Red de carga del cristal HSE}
+Para dos condensadores iguales, $C_{ext}=2(C_L-C_{stray})$. La versión anterior usaba $C_L=8$~pF y obtenía 12~pF. La referencia seleccionada (ABM3B-25.000MHZ-B4U-T) tiene, según un distribuidor, $C_L=18$~pF (\textbf{por verificar en la hoja de datos de Abracon}). Con $C_{stray}=3$~pF (supuesto) resulta:
+\[
+C_{ext}=2(18-3)=30\ \mathrm{pF},
+\]
+mientras que el esquemático instala 16~pF por lado, lo que da una capacitancia de carga efectiva $C_L = 16/2+3 = 11$~pF, 7~pF por debajo de la requerida. Esto puede desviar la frecuencia o afectar el arranque del oscilador. Se registra como desviación D-06 y debe corregirse en la siguiente revisión.
+
+\subsection{Resistencias de polarización de I\textsuperscript{2}C}
+Con $V_{CC}=3{,}3$~V, $V_{OL}=0{,}4$~V, $I_{OL}=3$~mA, $t_r=300$~ns y $C_b=50$~pF (supuesto):
+\[
+R_{p(min)}=\frac{3{,}3-0{,}4}{3\,\mathrm{mA}}\approx 967\ \Omega,\qquad
+R_{p(max)}=\frac{300\,\mathrm{ns}}{0{,}8473\cdot 50\,\mathrm{pF}}\approx 7{,}08\ \mathrm{k}\Omega.
+\]
+Los 4{,}7~k$\Omega$ instalados (R6, R7) están dentro del intervalo. Cumple.
+
+\subsection{Ancho de pista para las bobinas}
+Con IPC-2221 para capa externa ($k=0{,}048$, $\Delta T=10$~°C, cobre de 1~oz): $A=(I/(k\,\Delta T^{0{,}44}))^{1/0{,}725}$ y $w=A/(1{,}378\ \mathrm{mil})$. Para 1~A resulta $\approx 0{,}30$~mm y para 1{,}5~A, $\approx 0{,}53$~mm. Como objetivo de diseño se propone $\geq 1$~mm para la potencia, por margen y caída de tensión. El valor de corriente es un supuesto: la corriente real depende de la resistencia de la bobina (no definida).
+
+\subsection{Magnetorquers}
+Se mantiene como referencia el momento dipolar $m=NIA_{ef}$ y el par $\boldsymbol{\tau}=\boldsymbol{m}\times\boldsymbol{B}$. No se dimensionan las bobinas en esta entrega (el objetivo de $0{,}07\ \mathrm{A\,m^2}$ por eje es una referencia genérica de 1U y no un requisito confirmado de UD34). Solo hay dos ejes en el esquemático.
+
+\subsection{Arranque, depuración y pines no usados}
+\begin{itemize}
+    \item \texttt{BOOT0} a \texttt{DGND} mediante 10~k$\Omega$ (R1).
+    \item Interfaz SWD de 4 pines (J1: \texttt{3V3\_DIGITAL}, \texttt{SWCLK}, \texttt{SWDIO}, \texttt{DGND}) y condensador de 100~nF en \texttt{NRST}.
+    \item Pines no usados del microcontrolador: quedan sin conectar. Para las entradas de periféricos no usados se recomienda configurarlos como analógicos o salida en el firmware.
+    \item Puntos de prueba: previstos en la versión anterior (NRST, VCAP, \texttt{3.3V\_Iso}, PWM) pero \textbf{no capturados} (D-10).
+    \item Desacoplamiento: el esquemático no incluye un condensador por cada par VDD/VSS del STM32 (D-08).
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Librerías de componentes}
+
+El proyecto usa tres archivos de librería propios en el repositorio (\texttt{Esquematicos/2\_Libraries}): \texttt{UD34\_Sym.SchLib} (símbolos), \texttt{UD34\_Footprints.PcbLib} (huellas) y \texttt{UD34\_Components.LibPkg} (paquete de librerías que resuelve las dependencias). En el proyecto aparecen sin errores de compilación de librería.
+
+\paragraph{Estado de la verificación.} Los símbolos y las huellas se revisan frente a las hojas de datos con la lista siguiente. \textbf{Esta revisión no está documentada de forma completa en esta entrega}; se deja la lista como criterio y queda pendiente registrar el resultado por componente:
+\begin{itemize}
+    \item nombres, números y tipos eléctricos de los pines del símbolo;
+    \item correspondencia pines--pads, incluido el pad térmico del DRV8833 (PowerPAD);
+    \item encapsulado exacto, numeración y orientación del pin 1;
+    \item patrón de montaje recomendado;
+    \item parámetros de fabricante y MPN (que alimentan la BOM).
+\end{itemize}
+Las hojas de datos disponibles en el repositorio (\texttt{3\_Datasheets}) son las del STM32H753IIT6, MT48LC4M16A2P, ISO7741DWR y DRV8833PWPR. Faltan en el repositorio las del eMMC Kingston, del cristal ABM3B, del conector Molex 53259-0429 y de los pasivos (D-14, ver también Sección~\ref{sec:repo}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Captura esquemática jerárquica}
+
+\subsection{Estructura}
+\texttt{Top\_Level.SchDoc} conecta cuatro hojas mediante \emph{Sheet Entries} (señales simples) y \emph{signal harnesses} (buses):
+\begin{itemize}
+    \item \textbf{U\_OBC\_Core:} STM32H753IIT6, reloj, reinicio, depuración SWD, \emph{pull-ups} I\textsuperscript{2}C y resistencias serie SPI. Define los harness \texttt{FMC\_BUS\_TYPE}, \texttt{SDIO\_BUS\_TYPE}, \texttt{PAYLOAD\_SPI\_TYPE}, \texttt{I2C\_DEF}, \texttt{DCMI\_DEF} y \texttt{ADCS\_CTRL\_DEF}.
+    \item \textbf{U\_Mass\_Storage:} SDRAM MT48LC4M16A2P-6A y eMMC EMMC04G-M627.
+    \item \textbf{U\_ADCS\_Isolated:} aislador ISO7741DWR y puente H DRV8833PWPR; harness \texttt{COIL\_X\_DEF} y \texttt{COIL\_Y\_DEF}.
+    \item \textbf{U\_Interfaces\_Connectors:} conectores y filtrado de la entrada de potencia (C6 de 0{,}1~$\mu$F y C7 de 10~$\mu$F).
+\end{itemize}
+
+\subsection{Reutilización}
+Los harness (\texttt{.Harness}) definen cada interfaz una sola vez y se comparten entre las hojas, lo que permite reutilizar la interfaz SPI, I\textsuperscript{2}C, DCMI, FMC y SDIO en otras tarjetas. No se identificaron bloques repetidos que justifiquen diseño multicanal; las bobinas X e Y comparten el mismo DRV8833 (dos puentes H).
+
+\subsection{Documentación de las hojas}
+Los nombres de red son coherentes entre hojas. \textbf{Los cajetines de las hojas están vacíos} (título, número, revisión, autor); debe completarse antes de la entrega final (D-13).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Restricciones de PCB y condiciones de fabricación}\label{sec:fab}
+
+\subsection{Proveedor y capacidades}
+Se eligió \textbf{JLCPCB} (fabricación de PCB rígida estándar). Las capacidades se consultaron el 27/10/2026 en \url{https://jlcpcb.com/capabilities/pcb-capabilities} y \url{https://api.jlcpcb.com/capabilities/Capabilities}. Valores relevantes registrados:
+\begin{itemize}
+    \item Capas: 1 a 32; impedancia controlada desde 4 capas.
+    \item Taladro: 0{,}20--6{,}30~mm. Vía en 2 capas: taladro mínimo 0{,}3~mm y diámetro 0{,}5~mm; en multicapa: 0{,}2~mm y 0{,}45~mm.
+    \item Separación pista--borde (fresado): 0{,}2~mm. Paso mínimo de pines de CI: 0{,}4~mm.
+    \item Guía BGA: vía de abanico con taladro 0{,}15~mm y relleno (POFV) disponible en 6--20 capas.
+\end{itemize}
+Algunos valores de anchos mínimos y de anillo anular provienen de fuentes secundarias y están marcados \emph{por confirmar} en la matriz. Un valor mínimo de fabricación no garantiza que la geometría sea adecuada para la corriente o la señal; por eso las restricciones eléctricas se derivan aparte.
+
+\subsection{Apilamiento preliminar}
+Se propone 4 capas (señal / GND / alimentación / señal), FR-4, 1{,}6~mm, cobre exterior de 1~oz, por la presencia del eMMC en FBGA-153, el microcontrolador de 176 pines, el bus FMC de 38 señales y los dominios aislados. Los valores geométricos que dependen del apilamiento (impedancias, anchos) se definirán en la guía de enrutamiento. Podría ser necesario un servicio especial para el BGA (vía rellena o HDI).
+
+\subsection{Matriz de restricciones}
+La Tabla~\ref{tab:matriz} contiene la matriz. Se distingue entre condiciones \emph{exigidas} por una fuente técnica, \emph{recomendaciones} adoptadas por el equipo e \emph{inferencias} propias. Donde la fuente dice \emph{por confirmar}, el valor no se contrastó con la hoja de datos en esta entrega.
+
+\input{tablas/restricciones.tex}
+\captionof{table}{Matriz de restricciones de PCB y fabricación.}\label{tab:matriz}
+
+\subsection{Incorporación al esquemático}
+\textbf{No se han creado directivas \emph{Parameter Set} en el esquemático en esta entrega.} Las restricciones están registradas en la matriz y en la hoja \texttt{Restricciones} del libro de cálculo. Quedan como trabajo pendiente: clases de red \texttt{POWER}, \texttt{PGND}, \texttt{FMC}, \texttt{SDIO}, \texttt{DCMI} y \texttt{SPI}, con reglas de ancho (Width) y de separación (Clearance) asociadas; las reglas de longitud de grupo se configurarán en el gestor de restricciones durante el enrutamiento. Las instrucciones de ubicación (desacoplamiento, cristal, vías térmicas) quedan como notas y entradas de la matriz.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Verificación del diseño}
+
+\subsection{Revisión automática (ERC)}
+Se ejecutó la compilación del proyecto en Altium Designer; el registro está en la Tabla~\ref{tab:erc}.
+\input{tablas/erc.tex}
+\captionof{table}{Registro de la verificación automática.}\label{tab:erc}
+
+No se desactivaron las comprobaciones de forma global. Los mensajes restantes corresponden a la desviación D-01 y se aceptan solo como excepción temporal.
+
+\subsection{Revisión manual}
+\textbf{Pendiente.} La revisión cruzada entre los dos integrantes (alimentación de todos los dispositivos, compatibilidad de señales, asignación de pines, conexiones entre hojas, estados de arranque, correspondencia símbolo--huella) no se ha documentado todavía. Al revisar los PDFs del esquemático se detectaron las desviaciones de la Sección~\ref{sec:desv}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Desviaciones y asuntos pendientes}\label{sec:desv}
+
+\input{tablas/desviaciones.tex}
+\captionof{table}{Desviaciones entre la especificación/versión anterior del informe y el esquemático entregado.}
+
+\textbf{D-14 (repositorio):} faltan datasheets del eMMC, del cristal, del conector Molex y de los pasivos, además del README, la hoja de cálculo y los PDF en el repositorio (se entregan con este paquete).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{BOM y análisis de costos}\label{sec:bom}
+
+\subsection{BOM}
+La BOM corresponde al esquemático entregado, con todos los componentes montados (no hay opcionales ni no montados). Los componentes con referencia \emph{por confirmar} o \emph{sin referencia comercial} se cotizan con estimaciones declaradas.
+
+\input{tablas/bom.tex}
+\captionof{table}{Lista de materiales (BOM) de la PCB 2.}
+
+\subsection{Costos}
+Se estimó el costo de componentes para lotes de 10, 100 y 1000 tarjetas. Para cada componente se multiplica la cantidad por tarjeta por el número de tarjetas y se aplica el precio del escalón correspondiente a \emph{esa cantidad de piezas}. Todos los precios se llevaron a USD con tipos de cambio supuestos (SGD$\rightarrow$USD 0{,}77; EUR$\rightarrow$USD 1{,}08). Consulta: 27/10/2026. No incluye fabricación, ensamblaje, transporte ni impuestos.
+
+\input{tablas/costos_resumen.tex}
+\captionof{table}{Costo de componentes por lote.}\label{tab:costos}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{img/costo_por_tarjeta.png}
+\caption{Costo de componentes por tarjeta frente al tamaño del lote.}
+\end{figure}
+
+\paragraph{Análisis.} El costo por tarjeta baja de aproximadamente 23{,}0 a 18{,}4~USD de 10 a 1000 tarjetas (cerca de 20~\%). La reducción es moderada porque el costo está dominado por el microcontrolador y las dos memorias, cuyos precios por escalón cambian poco, y porque el último escalón publicado se aplica a cantidades mayores (criterio conservador). El STM32H753IIT6 y las memorias suponen la mayor parte del costo. Alrededor de un 35~\% del costo por tarjeta proviene de precios \textbf{estimados} (SDRAM, cristal, pasivos sin cotizar y conectores genéricos); el eMMC aparece sin stock en la fuente usada, y la SDRAM está en \emph{Last Time Buy}, de modo que la disponibilidad real es un riesgo de costo. Los precios no necesariamente bajan con la cantidad: por ejemplo, SDRAM y los precios con un solo escalón se mantuvieron constantes.
+
+\input{tablas/costos_detalle.tex}
+\captionof{table}{Costo por componente y lote (USD).}
+
+\input{tablas/precios_fuentes.tex}
+\captionof{table}{Fuentes de precio y estado de cada cotización.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Organización del repositorio}\label{sec:repo}
+
+\begin{itemize}
+    \item \texttt{Lab04/Esquematicos/PCB2\_OBC\_ADCS/}: proyecto Altium y hojas esquemáticas.
+    \item \texttt{Lab04/Esquematicos/2\_Libraries/}: librerías propias.
+    \item \texttt{Lab04/Esquematicos/3\_Datasheets/}: hojas de datos (faltan las indicadas en la Sección~4).
+    \item \texttt{Lab04/Calculos\_BOM/}: libro de cálculo con BOM, costos y matriz.
+    \item \texttt{Lab04/PDF\_Esquematicos/}: esquemáticos en PDF.
+    \item \texttt{Lab04/Validacion/}: capturas del ERC.
+    \item \texttt{Lab04/Informe/}: este informe.
+    \item \texttt{README.md}: integrantes, versión de Altium y cómo abrir el proyecto.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusiones}
+\begin{itemize}
+    \item La estructura jerárquica con \emph{signal harnesses} funciona y los errores de conectividad entre hojas (harness sin tipo, designadores duplicados, nombre de red duplicado) se resolvieron.
+    \item El esquemático \textbf{no está completo}: SDRAM, eMMC y cámara no están conectadas al microcontrolador, el aislador no cubre las cuatro señales PWM y el lado aislado no tiene alimentación. Estos puntos se documentan como desviaciones y deben cerrarse antes del enrutamiento.
+    \item Los cálculos de \emph{pull-ups} I\textsuperscript{2}C cumplen; el del cristal HSE evidencia una discrepancia que debe corregirse.
+    \item El costo estimado de componentes es de unos 23~USD por tarjeta en lote de 10 y 18~USD en lote de 1000, con una parte considerable estimada y con riesgos de disponibilidad.
+    \item Quedan pendientes la revisión manual, las directivas \emph{Parameter Set} y la verificación documentada de símbolos y huellas.
+\end{itemize}
+
+\begin{thebibliography}{99}
+\bibitem{nasa_sst} NASA, \textit{State-of-the-Art Small Spacecraft Technology}, 2026. (Referencia heredada de la versión anterior; verificar el capítulo citado.)
+\bibitem{jlc} JLCPCB, \textit{PCB Capabilities}, consultado el 27/10/2026. \url{https://jlcpcb.com/capabilities/pcb-capabilities}
+\bibitem{jlcbga} JLCPCB, \textit{BGA Design Guidelines}, consultado el 27/10/2026. \url{https://jlcpcb.com/help/article/243-BGA-Design-Guidelines---PCB-Layout-Recommendations-for-BGA-packages}
+\bibitem{lcsc} LCSC Electronics, fichas de producto C146558, C577446, C571196, C50506 y C596875, consultadas el 27/10/2026.
+\bibitem{digikey} DigiKey, fichas de MT48LC4M16A2P-6A IT:J TR, ISO7741DWR, ERJ-3EKF1002V y GRM155R71C104KA88D, consultadas el 27/10/2026.
+\bibitem{ipc} IPC-2221, \textit{Generic Standard on Printed Board Design}.
+\end{thebibliography}
+
+\appendix
+\section{Esquemáticos completos}
+Se anexan las seis hojas del PDF exportado del proyecto (\texttt{Top\_Level}, \texttt{U\_OBC\_Core} --- tres partes del microcontrolador y lógica asociada ---, \texttt{U\_Mass\_Storage}, \texttt{U\_ADCS\_Isolated}, \texttt{U\_Interfaces\_Connectors} y el \emph{Board Stack Report}).
+
+\includepdf[pages=-,landscape=false,pagecommand={},scale=0.95]{img/Esquematico_P4.pdf}
+
+\end{document}

@@ -1,0 +1,26 @@
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{2.3cm}|>{\raggedright\arraybackslash}p{8.6cm}|}
+\hline
+\textbf{Clave} & \textbf{Componente} & \textbf{Estado} & \textbf{Fuente} \\ \hline
+\endfirsthead
+\hline
+\textbf{Clave} & \textbf{Componente} & \textbf{Estado} & \textbf{Fuente} \\ \hline
+\endhead
+STM32 & STM32H753IIT6 & Cotizado & LCSC C146558 (\url{https://www.lcsc.com/product-image/C146558.html}). Referencia; DigiKey/TME muestran 0 o poco stock. \\ \hline
+EMMC & EMMC04G-M627-A01 (Kingston) & Cotizado (sin stock) & LCSC C577446 (\url{https://www.lcsc.com/product-image/C577446.html}). Aparece sin stock: disponibilidad PENDIENTE. \\ \hline
+SDRAM & MT48LC4M16A2P-6A (Micron) & ESTIMADO & DigiKey ES MT48LC4M16A2P-6A IT:J TR, 4,52 EUR sin IVA, un solo escalón visible (\url{https://www.digikey.com/en/products/detail/micron-technology-inc/MT48LC4M16A2P-6A-IT-J-TR/4315481}). Estado 'Last Time Buy' (fecha 30/06/2026 ya vencida): disponibilidad PENDIENTE; se aplica el mismo precio a los 3 lotes. \\ \hline
+ISO & ISO7741DWR (TI) & Cotizado & LCSC C571196 (\url{https://www.lcsc.com/product-image/C571196.html}). Otros distribuidores muestran precios mayores (p.ej. 2,57 EUR en DigiKey DE sin stock). \\ \hline
+DRV & DRV8833PWPR (TI) & Cotizado & LCSC C50506 (\url{https://www.lcsc.com/product-image/C50506.html}). DigiKey/Mouser muestran 1,68-2,34 USD. \\ \hline
+XTAL & ABM3B-25.000MHZ-B4U-T (Abracon) & ESTIMADO (variante) & Sin cotización de la referencia exacta. Se usa como proxy la variante ABM3B-25.000MHZ-B2-T en LCSC C596875 (\url{https://www.lcsc.com/product-image/C596875.html}). \\ \hline
+C100N & GRM155R71C104KA88D (Murata) 0,1 uF 0402 & Cotizado & DigiKey 490-3261-1-ND vía OEMsTrade (\url{https://www.oemstrade.com/search/grm155r71c104ka88d%200402-104k%20pb-free}). \\ \hline
+R10K & ERJ3EKF1002V (Panasonic) 10 kOhm 0603 & Cotizado & DigiKey P10.0KHCT-ND (\url{https://www.digikey.com/en/products/detail/panasonic-electronic-components/ERJ-3EKF1002V/196066}). Solo se ven 3 escalones; se mantiene el último. \\ \hline
+R\_GEN & Resistencias 33 ohm / 4,7 kohm 0603 1 \% & ESTIMADO (proxy) & Sin cotización de la referencia exacta; se usa el precio de la serie ERJ3EKF (ERJ3EKF1002V). \\ \hline
+C\_PF & Condensador 16 pF C0G 0402 & ESTIMADO & Sin cotización. Estimación del equipo; reemplazar al definir la referencia exacta. \\ \hline
+C\_2U2 & Condensador 2,2 uF (VCAP) & ESTIMADO & Sin cotización. Estimación del equipo; reemplazar al definir la referencia exacta. \\ \hline
+C\_10U & Condensador 10 uF & ESTIMADO & Sin cotización. Estimación del equipo; reemplazar al definir la referencia exacta. \\ \hline
+J\_SWD & Molex 53259-0429 (4 pines, 3,5 mm) & Cotizado (RS, SGD) & RS 602-1299, paquete de 10 (\url{https://sg.rs-online.com/web/p/pcb-headers/6021299}). Escalones 10-40, 50-240, 250-740, 750-2240, 2250+. \\ \hline
+HDR\_PIN & Cabecera genérica, precio por pin & ESTIMADO & Los conectores J\_EPS, J\_COIL\_X/Y, J\_PAYLOAD, J\_CAMERA y J\_TELEM son símbolos genéricos sin referencia comercial; se estima por pin. \\ \hline
+\end{longtable}
+\normalsize

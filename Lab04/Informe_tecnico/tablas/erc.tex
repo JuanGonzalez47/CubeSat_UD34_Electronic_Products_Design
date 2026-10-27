@@ -1,0 +1,17 @@
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.3cm}|>{\raggedright\arraybackslash}p{3.9cm}|>{\raggedright\arraybackslash}p{1.8cm}|}
+\hline
+\textbf{Fecha/hora} & \textbf{Hoja} & \textbf{Mensaje(s)} & \textbf{Causa} & \textbf{Resolución} & \textbf{Estado} \\ \hline
+\endfirsthead
+\hline
+\textbf{Fecha/hora} & \textbf{Hoja} & \textbf{Mensaje(s)} & \textbf{Causa} & \textbf{Resolución} & \textbf{Estado} \\ \hline
+\endhead
+27/10/2026 06:03 & Top\_Level.SchDoc & [Fatal Error] Missing Harness Type on Signal Harness & Había un tramo de cable de harness suelto fuera del diagrama y Sheet Entries sin Harness Type (TELEMETRY\_I2C, PAYLOAD\_SPI). & Se asignó el Harness Type correcto a los Sheet Entries y se eliminó el cable suelto. & Resuelto \\ \hline
+27/10/2026 06:03 & U\_Interfaces\_Connectors / U\_OBC\_Core & Duplicate Component Designators C5, J1; Duplicate Net Names NetC5\_1 & Designadores repetidos entre hojas y eMMC sin anotar ('*'). & Tools > Annotation > Reset All y Annotate Schematics (Across Then Down). & Resuelto \\ \hline
+27/10/2026 06:20 & Top\_Level.SchDoc & Duplicate Net Names Wire FMC\_SDNE0 & Dos objetos con el mismo nombre en Top\_Level. & Corregido en el esquemático. & Resuelto (verificado a las 06:22: ya no aparece) \\ \hline
+27/10/2026 06:22 & U\_Mass\_Storage.SchDoc & Net CLK/CMD has only one pin; Net FMC\_* contains floating input pins / has only one pin (decenas de mensajes) & Las señales FMC, SDIO (y DCMI) llegan hasta U\_OBC\_Core pero los net labels no están conectados a pines del STM32H753. & NO corregido en esta versión. Se acepta como EXCEPCIÓN DOCUMENTADA: la asignación de pines FMC/SDIO/DCMI se hará en CubeMX y se conectará en la siguiente revisión (Desviación D-01). No se desactivó el ERC globalmente. & Excepción aceptada (abierta) \\ \hline
+ & Revisión manual & Pendiente: revisión cruzada entre ambos integrantes & Debe hacerse y documentarse antes de entregar. & Completar fecha, revisor y observaciones. & PENDIENTE \\ \hline
+\end{longtable}
+\normalsize

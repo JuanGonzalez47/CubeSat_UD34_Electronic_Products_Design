@@ -1,0 +1,25 @@
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.0cm}|>{\raggedright\arraybackslash}p{1.9cm}|>{\raggedright\arraybackslash}p{3.4cm}|>{\raggedright\arraybackslash}p{3.9cm}|>{\raggedright\arraybackslash}p{4.0cm}|>{\raggedright\arraybackslash}p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Tema} & \textbf{Especificación / informe previo} & \textbf{Esquemático as-built} & \textbf{Acción propuesta} & \textbf{Estado} \\ \hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Tema} & \textbf{Especificación / informe previo} & \textbf{Esquemático as-built} & \textbf{Acción propuesta} & \textbf{Estado} \\ \hline
+\endhead
+D-01 & FMC / SDIO / DCMI & STM32 conectado a SDRAM, eMMC y cámara & Net labels sin conexión a pines del STM32H753 & Asignar pines en STM32CubeMX (SDMMC 4 u 8 bits, FMC SDRAM, DCMI 8 bits) y conectar & Abierta \\ \hline
+D-02 & Aislador ISO7741 & Aislar las 4 señales PWM (A1, A2, B1, B2) & ISO7741 tiene 3 canales en una dirección: PWM\_B2 no llega al DRV8833 y BIN2 (pin 10) queda sin conexión & Cambiar a ISO7740 (4 canales en el mismo sentido) o reasignar canales & Abierta \\ \hline
+D-03 & Alimentación del puente H & VBATT 7,4-8,4 V directo al DRV8833; DCP010505BP solo para el lado aislado lógico & VM del DRV8833 y VCC2 del ISO7741 conectados a la etiqueta 5V\_ISO; no hay fuente que genere 5V\_ISO (DCP010505BP no está en el esquemático); J\_EPS (3 pines) no lleva VBATT & Añadir DCP010505BP (o fuente equivalente), llevar VBATT al conector y a VM & Abierta \\ \hline
+D-04 & IMU & TDK ICM-20948 en la tabla de componentes & No existe en ninguna hoja & Añadir IMU (I2C/SPI) y asignar pines & Abierta \\ \hline
+D-05 & Ejes de actuación & Tres ejes de magnetorquers & Solo COIL\_X y COIL\_Y (un DRV8833 = 2 puentes H) & Añadir segundo DRV8833 y canales de aislamiento, o declarar 2 ejes como simplificación del alcance & Abierta (se declara 2 ejes) \\ \hline
+D-06 & Cristal HSE & Informe: CL = 8 pF, C = 12 pF & C2 = C5 = 16 pF; cristal ABM3B-25.000MHZ-B4U-T cuya CL reportada es 18 pF & Verificar CL en hoja de datos y recalcular (Cext $\approx$ 30 pF con Cstray = 3 pF) & Abierta \\ \hline
+D-07 & SDRAM & Informe previo: ISSI IS42S16400J-7TL & Micron MT48LC4M16A2P-6A & Informe corregido para reflejar el esquemático; evaluar alternativa (ISSI o Alliance Memory) & Corregido en informe \\ \hline
+D-08 & Desacoplamiento STM32 & Condensador cerámico cerca de cada pin de alimentación & Un solo 100 nF (en NRST); 14 VDD sin condensador dedicado & Añadir 100 nF por par VDD/VSS y 4,7 uF de volumen & Abierta \\ \hline
+D-09 & eMMC VCCQ & Informe previo: VCCQ = 1,8 V & VCCQ = 3V3\_DIGITAL & Mantener 3,3 V si la interfaz del host lo permite & Corregido en informe \\ \hline
+D-10 & Puntos de prueba & NRST, VCAP, 3.3V\_Iso, PWM & No hay test points en el esquemático & Añadir test points & Abierta \\ \hline
+D-11 & Pines PWM vs FMC & - & PWM\_A1/A2/B1/B2 asignados a PE9, PE11, PE13, PE14, que son pines de datos de FMC & Reasignar PWM a pines de timer libres en CubeMX & Abierta \\ \hline
+D-12 & Conectores & PC/104 de apilamiento y mezzanine de alta densidad & Cabeceras genéricas (3, 4, 5 y 16 pines); J\_EPS sin 5 V ni VBATT & Definir conectores comerciales y tabla de pines & Abierta \\ \hline
+D-13 & Cajetín de hojas & Título, número, revisión y autores & Cajetines vacíos & Rellenar Title, Number, Revision, Drawn By & Abierta \\ \hline
+\end{longtable}
+\normalsize

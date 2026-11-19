@@ -1,32 +1,45 @@
 \scriptsize
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{2.5pt}
 \renewcommand{\arraystretch}{1.15}
-\begin{longtable}{|>{\raggedright\arraybackslash}p{0.5cm}|>{\raggedright\arraybackslash}p{2.3cm}|>{\raggedright\arraybackslash}p{1.0cm}|>{\raggedright\arraybackslash}p{1.2cm}|>{\raggedright\arraybackslash}p{1.2cm}|>{\raggedright\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{2.2cm}|}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.4cm}|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}p{0.8cm}|>{\raggedright\arraybackslash}p{1.1cm}|>{\raggedright\arraybackslash}p{1.1cm}|>{\raggedright\arraybackslash}p{1.2cm}|>{\raggedright\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{2.3cm}|}
 \hline
-\textbf{\#} & \textbf{Designadores} & \textbf{Pzs/tarjeta} & \textbf{USD u. (10)} & \textbf{USD u. (100)} & \textbf{USD u. (1000)} & \textbf{Costo (10)} & \textbf{Costo (100)} & \textbf{Costo (1000)} & \textbf{Estado del precio} \\ \hline
+\textbf{\#} & \textbf{Designadores} & \textbf{Pzs/t.} & \textbf{USD u.(10)} & \textbf{USD u.(100)} & \textbf{USD u.(1k)} & \textbf{Costo(10)} & \textbf{Costo(100)} & \textbf{Costo(1k)} & \textbf{Estado del precio} \\ \hline
 \endfirsthead
 \hline
-\textbf{\#} & \textbf{Designadores} & \textbf{Pzs/tarjeta} & \textbf{USD u. (10)} & \textbf{USD u. (100)} & \textbf{USD u. (1000)} & \textbf{Costo (10)} & \textbf{Costo (100)} & \textbf{Costo (1000)} & \textbf{Estado del precio} \\ \hline
+\textbf{\#} & \textbf{Designadores} & \textbf{Pzs/t.} & \textbf{USD u.(10)} & \textbf{USD u.(100)} & \textbf{USD u.(1k)} & \textbf{Costo(10)} & \textbf{Costo(100)} & \textbf{Costo(1k)} & \textbf{Estado del precio} \\ \hline
 \endhead
 1 & U1 & 1 & 8.0151 & 6.5870 & 6.5870 & 80.15 & 658.70 & 6587.00 & Cotizado \\ \hline
 2 & *1 & 1 & 4.6209 & 4.2064 & 3.5938 & 46.21 & 420.64 & 3593.80 & Cotizado (sin stock) \\ \hline
-3 & U2 & 1 & 4.8816 & 4.8816 & 4.8816 & 48.82 & 488.16 & 4881.60 & ESTIMADO \\ \hline
-4 & U3 & 1 & 0.8819 & 0.6642 & 0.5901 & 8.82 & 66.42 & 590.10 & Cotizado \\ \hline
-5 & U4 & 1 & 0.5379 & 0.4006 & 0.3511 & 5.38 & 40.06 & 351.10 & Cotizado \\ \hline
-6 & Y1 & 1 & 0.5644 & 0.4321 & 0.4321 & 5.64 & 43.21 & 432.10 & ESTIMADO (variante) \\ \hline
-7 & C1, C6 & 2 & 0.0240 & 0.0132 & 0.0080 & 0.48 & 2.64 & 16.00 & Cotizado \\ \hline
-8 & R1 & 1 & 0.0340 & 0.0256 & 0.0256 & 0.34 & 2.56 & 25.60 & Cotizado \\ \hline
-9 & R6, R7 & 2 & 0.0340 & 0.0256 & 0.0256 & 0.68 & 5.12 & 51.20 & ESTIMADO (proxy) \\ \hline
-10 & R2, R3, R4, R5 & 4 & 0.0256 & 0.0256 & 0.0256 & 1.02 & 10.24 & 102.40 & ESTIMADO (proxy) \\ \hline
-11 & C2, C5 & 2 & 0.0500 & 0.0200 & 0.0120 & 1.00 & 4.00 & 24.00 & ESTIMADO \\ \hline
-12 & C3, C4 & 2 & 0.1000 & 0.0500 & 0.0300 & 2.00 & 10.00 & 60.00 & ESTIMADO \\ \hline
-13 & C7 & 1 & 0.1500 & 0.0800 & 0.0500 & 1.50 & 8.00 & 50.00 & ESTIMADO \\ \hline
-14 & J1 & 1 & 0.7446 & 0.7423 & 0.6976 & 7.45 & 74.23 & 697.62 & Cotizado (RS, SGD) \\ \hline
-15 & J2 (J\_EPS) & 3 & 0.0800 & 0.0500 & 0.0300 & 2.40 & 15.00 & 90.00 & ESTIMADO \\ \hline
-16 & J3 (J\_COIL\_X) & 2 & 0.0800 & 0.0500 & 0.0300 & 1.60 & 10.00 & 60.00 & ESTIMADO \\ \hline
-17 & J4 (J\_COIL\_Y) & 2 & 0.0800 & 0.0500 & 0.0300 & 1.60 & 10.00 & 60.00 & ESTIMADO \\ \hline
-18 & P1 (J\_PAYLOAD) & 5 & 0.0800 & 0.0500 & 0.0300 & 4.00 & 25.00 & 150.00 & ESTIMADO \\ \hline
-19 & P2 (J\_CAMERA) & 16 & 0.0500 & 0.0300 & 0.0300 & 8.00 & 48.00 & 480.00 & ESTIMADO \\ \hline
-20 & P3 (J\_TELEM) & 4 & 0.0800 & 0.0500 & 0.0300 & 3.20 & 20.00 & 120.00 & ESTIMADO \\ \hline
+3 & U6 & 1 & 4.8816 & 4.8816 & 4.8816 & 48.82 & 488.16 & 4881.60 & ESTIMADO (LTB) \\ \hline
+4 & U2, U2 (Z) & 2 & 0.8819 & 0.6642 & 0.5901 & 17.64 & 132.84 & 1180.20 & Cotizado \\ \hline
+5 & U3, U5 & 2 & 0.5379 & 0.4006 & 0.3511 & 10.76 & 80.12 & 702.20 & Cotizado \\ \hline
+6 & U7 & 1 & 4.1500 & 3.6000 & 3.1000 & 41.50 & 360.00 & 3100.00 & Cotizado \\ \hline
+7 & D1--D6 & 6 & 0.3500 & 0.2500 & 0.1800 & 21.00 & 150.00 & 1080.00 & Cotizado \\ \hline
+8 & U3, U4 (Sun) & 2 & 1.9500 & 1.6500 & 1.4200 & 39.00 & 330.00 & 2840.00 & Cotizado \\ \hline
+9 & U8 & 1 & 0.3200 & 0.2400 & 0.1900 & 3.20 & 24.00 & 190.00 & Cotizado \\ \hline
+10 & Y1 & 1 & 0.5644 & 0.4321 & 0.4321 & 5.64 & 43.21 & 432.10 & ESTIMADO (variante) \\ \hline
+11 & C1, C6 & 2 & 0.0240 & 0.0132 & 0.0080 & 0.48 & 2.64 & 16.00 & Cotizado \\ \hline
+12 & C9 & 1 & 0.0240 & 0.0132 & 0.0080 & 0.24 & 1.32 & 8.00 & Cotizado \\ \hline
+13 & C8 & 1 & 0.0300 & 0.0150 & 0.0100 & 0.30 & 1.50 & 10.00 & ESTIMADO \\ \hline
+14 & C10, C11 & 2 & 0.0400 & 0.0250 & 0.0180 & 0.80 & 5.00 & 36.00 & Cotizado \\ \hline
+15 & C2, C5 & 2 & 0.0500 & 0.0200 & 0.0120 & 1.00 & 4.00 & 24.00 & ESTIMADO \\ \hline
+16 & C3, C4 & 2 & 0.1000 & 0.0500 & 0.0300 & 2.00 & 10.00 & 60.00 & ESTIMADO \\ \hline
+17 & C7 & 1 & 0.1500 & 0.0800 & 0.0500 & 1.50 & 8.00 & 50.00 & ESTIMADO \\ \hline
+18 & R1 & 1 & 0.0340 & 0.0256 & 0.0256 & 0.34 & 2.56 & 25.60 & Cotizado \\ \hline
+19 & R6, R7 & 2 & 0.0340 & 0.0256 & 0.0256 & 0.68 & 5.12 & 51.20 & ESTIMADO (proxy) \\ \hline
+20 & R8, R9 & 2 & 0.0340 & 0.0256 & 0.0256 & 0.68 & 5.12 & 51.20 & ESTIMADO (proxy) \\ \hline
+21 & R2--R5 & 4 & 0.0256 & 0.0256 & 0.0256 & 1.02 & 10.24 & 102.40 & ESTIMADO (proxy) \\ \hline
+22 & R10--R15 & 6 & 0.0450 & 0.0300 & 0.0220 & 2.70 & 18.00 & 132.00 & Cotizado \\ \hline
+23 & J1 & 1 & 0.7446 & 0.7423 & 0.6976 & 7.45 & 74.23 & 697.60 & Cotizado \\ \hline
+24 & J2 (J\_EPS) & 1 & 0.0800 & 0.0500 & 0.0300 & 0.80 & 5.00 & 30.00 & ESTIMADO \\ \hline
+25 & J6 (J\_EPS\_LCL) & 1 & 0.0600 & 0.0400 & 0.0250 & 0.60 & 4.00 & 25.00 & ESTIMADO \\ \hline
+26 & J3 (J\_COIL\_X) & 1 & 0.0600 & 0.0400 & 0.0250 & 0.60 & 4.00 & 25.00 & ESTIMADO \\ \hline
+27 & J4 (J\_COIL\_Y) & 1 & 0.0600 & 0.0400 & 0.0250 & 0.60 & 4.00 & 25.00 & ESTIMADO \\ \hline
+28 & J5 (J\_COIL\_Z) & 1 & 0.0600 & 0.0400 & 0.0250 & 0.60 & 4.00 & 25.00 & ESTIMADO \\ \hline
+29 & P1 (J\_PAYLOAD) & 1 & 0.1000 & 0.0600 & 0.0400 & 1.00 & 6.00 & 40.00 & ESTIMADO \\ \hline
+30 & P2 (J\_CAMERA) & 1 & 0.2500 & 0.1800 & 0.1200 & 2.50 & 18.00 & 120.00 & ESTIMADO \\ \hline
+31 & P3 (J\_TELEM) & 1 & 0.0800 & 0.0500 & 0.0300 & 0.80 & 5.00 & 30.00 & ESTIMADO \\ \hline
+\multicolumn{6}{|r|}{\textbf{Costo total del lote (USD):}} & \textbf{340.61} & \textbf{2885.40} & \textbf{26170.90} & \\ \hline
+\multicolumn{6}{|r|}{\textbf{Costo por tarjeta (USD/tarjeta):}} & \textbf{34.06} & \textbf{28.85} & \textbf{26.17} & \\ \hline
 \end{longtable}
 \normalsize

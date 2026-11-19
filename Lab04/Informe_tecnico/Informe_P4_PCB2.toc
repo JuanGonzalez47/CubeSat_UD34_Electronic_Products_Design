@@ -1,0 +1,35 @@
+\xpg@aux {}{spanish}
+\contentsline {section}{\numberline {1}Resumen del estado de la entrega}{2}{section.1}%
+\contentsline {paragraph}{Resultado de la verificación eléctrica (ERC).}{2}{paragraph*.1}%
+\contentsline {section}{\numberline {2}Alcance y especificaciones de la tarjeta}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Funciones asignadas en la plataforma CubeSat 1U}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Interfaces inter-placa con el resto del nanosatélite}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Estrategia de aislamiento galvánico y dominios de alimentación}{4}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Selección y justificación de componentes COTS}{5}{section.3}%
+\contentsline {section}{\numberline {4}Diseño analítico y dimensionamiento de circuitos}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Acondicionamiento de fotodiodos solares (Etapa de Transimpedancia - TIA)}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Dimensionamiento de los magnetorquers y modulación PWM}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Resistencias de polarización para buses I\textsuperscript {2}C}{8}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Red de carga del oscilador HSE de 25~MHz}{8}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Ancho de pistas de potencia según norma IPC-2221}{8}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Presupuesto integral de potencia y consumo}{9}{subsection.4.6}%
+\contentsline {section}{\numberline {5}Librerías de componentes y correspondencia de modelos}{9}{section.5}%
+\contentsline {section}{\numberline {6}Captura esquemática jerárquica y estrategia de reutilización}{9}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Estructura modular en dos niveles}{9}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Estrategia de reutilización mediante Signal Harnesses}{10}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Restricciones de diseño de PCB y condiciones de fabricación}{10}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Proveedor de fabricación y capacidades tecnológicas}{10}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Propuesta de apilamiento preliminar (Stackup de 4 capas)}{11}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Matriz integral de restricciones de diseño de la PCB}{11}{subsection.7.3}%
+\contentsline {section}{\numberline {8}Verificación del diseño electrónico}{12}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Comprobación de Reglas Eléctricas (ERC)}{12}{subsection.8.1}%
+\contentsline {paragraph}{Justificación técnica de la excepción temporal aceptada.}{13}{paragraph*.5}%
+\contentsline {subsection}{\numberline {8.2}Revisión manual cruzada de ingeniería}{13}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Registro de desviaciones y seguimiento de cambios}{13}{section.9}%
+\contentsline {section}{\numberline {10}Lista de materiales (BOM) y análisis económico de costos}{14}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Lista de Materiales (BOM)}{14}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Análisis de costos y economías de escala}{15}{subsection.10.2}%
+\contentsline {paragraph}{Análisis del comportamiento económico.}{16}{paragraph*.7}%
+\contentsline {section}{\numberline {11}Organización del repositorio de control de versiones}{18}{section.11}%
+\contentsline {section}{\numberline {12}Conclusiones}{18}{section.12}%
+\contentsline {section}{\numberline {A}Esquemáticos completos del proyecto}{20}{appendix.A}%

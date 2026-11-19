@@ -1,17 +1,19 @@
 \tiny
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{2.5pt}
 \renewcommand{\arraystretch}{1.15}
-\begin{longtable}{|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.3cm}|>{\raggedright\arraybackslash}p{3.9cm}|>{\raggedright\arraybackslash}p{1.8cm}|}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.3cm}|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{1.6cm}|}
 \hline
-\textbf{Fecha/hora} & \textbf{Hoja} & \textbf{Mensaje(s)} & \textbf{Causa} & \textbf{Resolución} & \textbf{Estado} \\ \hline
+\textbf{Fase / ID} & \textbf{Hoja} & \textbf{Mensaje(s)} & \textbf{Causa} & \textbf{Resolución} & \textbf{Estado} \\ \hline
 \endfirsthead
 \hline
-\textbf{Fecha/hora} & \textbf{Hoja} & \textbf{Mensaje(s)} & \textbf{Causa} & \textbf{Resolución} & \textbf{Estado} \\ \hline
+\textbf{Fase / ID} & \textbf{Hoja} & \textbf{Mensaje(s)} & \textbf{Causa} & \textbf{Resolución} & \textbf{Estado} \\ \hline
 \endhead
-27/10/2026 06:03 & Top\_Level.SchDoc & [Fatal Error] Missing Harness Type on Signal Harness & Había un tramo de cable de harness suelto fuera del diagrama y Sheet Entries sin Harness Type (TELEMETRY\_I2C, PAYLOAD\_SPI). & Se asignó el Harness Type correcto a los Sheet Entries y se eliminó el cable suelto. & Resuelto \\ \hline
-27/10/2026 06:03 & U\_Interfaces\_Connectors / U\_OBC\_Core & Duplicate Component Designators C5, J1; Duplicate Net Names NetC5\_1 & Designadores repetidos entre hojas y eMMC sin anotar ('*'). & Tools > Annotation > Reset All y Annotate Schematics (Across Then Down). & Resuelto \\ \hline
-27/10/2026 06:20 & Top\_Level.SchDoc & Duplicate Net Names Wire FMC\_SDNE0 & Dos objetos con el mismo nombre en Top\_Level. & Corregido en el esquemático. & Resuelto (verificado a las 06:22: ya no aparece) \\ \hline
-27/10/2026 06:22 & U\_Mass\_Storage.SchDoc & Net CLK/CMD has only one pin; Net FMC\_* contains floating input pins / has only one pin (decenas de mensajes) & Las señales FMC, SDIO (y DCMI) llegan hasta U\_OBC\_Core pero los net labels no están conectados a pines del STM32H753. & NO corregido en esta versión. Se acepta como EXCEPCIÓN DOCUMENTADA: la asignación de pines FMC/SDIO/DCMI se hará en CubeMX y se conectará en la siguiente revisión (Desviación D-01). No se desactivó el ERC globalmente. & Excepción aceptada (abierta) \\ \hline
- & Revisión manual & Pendiente: revisión cruzada entre ambos integrantes & Debe hacerse y documentarse antes de entregar. & Completar fecha, revisor y observaciones. & PENDIENTE \\ \hline
+Fase 1 & Top\_Level.SchDoc & [Fatal Error] Missing Harness Type on Signal Harness & Tramos de cable de harness sueltos y Sheet Entries sin Harness Type asignado. & Se asignó el Harness Type correcto a los Sheet Entries y se eliminaron cables residuales. & Resuelto \\ \hline
+Fase 2 & U\_Interfaces / U\_OBC\_Core & Duplicate Component Designators C5, J1 & Designadores repetidos entre hojas y eMMC sin anotar. & Tools > Annotation > Annotate Schematics Quietly. & Resuelto \\ \hline
+Fase 3 & Top\_Level.SchDoc & Duplicate Net Names Wire FMC\_SDNE0 & Redundancia de etiquetas en el bus Top\_Level. & Corregido en el esquemático. & Resuelto \\ \hline
+Fase 4 & U\_ADCS\_Isolated / U\_Interfaces & [Fatal Error] Conflicting Harness Definition for ADCS\_CTRL\_DEF y COIL\_Z\_DEF & Inconsistencia entre archivos .Harness tras la adición del 3er eje (Z) y PWMs extra. & Unificación estricta de nombres (COUT1/COUT2), copia simétrica de conectores y depuración de Settings/Harness Definition Files. & Resuelto \\ \hline
+Fase 5 & U\_ADCS\_Isolated.SchDoc & [Error] 3V3\_DIGITAL y DGND contains Power Pin and Input Port objects & Puertos de entrada amarillos colocados en conflicto con pines de alimentación globales. & Sustitución de puertos amarillos por Power Ports estándar (3V3\_DIGITAL y DGND) y eliminación de cables duplicados en Top\_Level. & Resuelto \\ \hline
+Fase 6 & U\_SDRAM / U\_eMMC / U\_OBC\_Core & [Error/Warning] Net FMC\_*, Net CLK/CMD has only one pin / floating input pins & Las señales de los buses FMC, SDIO y DCMI llegan a U\_OBC\_Core pero no están cableadas a pines en U1C. & EXCEPCIÓN DOCUMENTADA Y ACEPTADA: El mapeo fino de pines multiplexados se realizará en STM32CubeMX para el enrutamiento de la Práctica 5. No se desactivó el ERC globalmente. & Excepción aceptada \\ \hline
+Fase 7 & Verificación Manual & Revisión cruzada de pines, dominios y tensiones & Chequeo manual de integridad eléctrica entre ambos integrantes. & Se validaron las conexiones de alimentación de todos los CI, dominios DGND vs PGND, desacoplamiento y concordancia de huellas. & Resuelto \\ \hline
 \end{longtable}
 \normalsize

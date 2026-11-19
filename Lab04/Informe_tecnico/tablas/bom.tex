@@ -1,32 +1,43 @@
 \scriptsize
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{2.5pt}
 \renewcommand{\arraystretch}{1.15}
-\begin{longtable}{|>{\raggedright\arraybackslash}p{0.5cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{0.8cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{2.4cm}|}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.5cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{0.6cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3.4cm}|>{\raggedright\arraybackslash}p{2.3cm}|}
 \hline
 \textbf{\#} & \textbf{Designadores} & \textbf{Descripción} & \textbf{Cant.} & \textbf{Fabricante} & \textbf{Referencia (MPN)} & \textbf{Encapsulado} \\ \hline
 \endfirsthead
 \hline
 \textbf{\#} & \textbf{Designadores} & \textbf{Descripción} & \textbf{Cant.} & \textbf{Fabricante} & \textbf{Referencia (MPN)} & \textbf{Encapsulado} \\ \hline
 \endhead
-1 & U1 & Microcontrolador ARM Cortex-M7 480 MHz, 2 MB Flash & 1 & STMicroelectronics & STM32H753IIT6 & LQFP-176 (24x24) \\ \hline
-2 & *1 & eMMC 4 GB & 1 & Kingston & EMMC04G-M627-A01 & FBGA-153 \\ \hline
-3 & U2 & SDRAM 64 Mbit (4M x 16), 3,3 V & 1 & Micron & MT48LC4M16A2P-6A & TSOP-II 54 \\ \hline
-4 & U3 & Aislador digital 4 canales (3 + 1), 5 kVrms & 1 & Texas Instruments & ISO7741DWR & SOIC-16 DW \\ \hline
-5 & U4 & Puente H doble 2,7-10,8 V & 1 & Texas Instruments & DRV8833PWPR & HTSSOP-16 (PowerPAD) \\ \hline
-6 & Y1 & Cristal 25 MHz (HSE) & 1 & Abracon & ABM3B-25.000MHZ-B4U-T & SMD 5,0 x 3,2 mm, 4 pines \\ \hline
-7 & C1, C6 & Condensador cerámico 0,1 uF X7R 16 V & 2 & Murata & GRM155R71C104KA88D & 0402 \\ \hline
-8 & R1 & Resistencia 10 kOhm 1 \% 0603 & 1 & Panasonic & ERJ3EKF1002V & 0603 \\ \hline
-9 & R6, R7 & Resistencia 4,7 kOhm 0603 & 2 & Panasonic (a definir) & Serie ERJ3EKF (valor 4,7 kOhm, MPN por confirmar) & 0603 \\ \hline
-10 & R2, R3, R4, R5 & Resistencia serie 33 ohm 0603 & 4 & Panasonic (a definir) & Serie ERJ3EKF (valor 33 ohm, MPN por confirmar) & 0603 \\ \hline
-11 & C2, C5 & Condensador 16 pF C0G (carga del cristal) & 2 & A definir & Por confirmar & 0402 (a verificar) \\ \hline
-12 & C3, C4 & Condensador 2,2 uF (VCAP del STM32) & 2 & A definir & Por confirmar & 0603 (a verificar) \\ \hline
-13 & C7 & Condensador 10 uF (filtrado J\_EPS) & 1 & A definir & Por confirmar & 0805 (a verificar) \\ \hline
-14 & J1 & Cabecera 4 pines 3,5 mm SWD & 1 & Molex & 53259-0429 & THT acodada 3,5 mm \\ \hline
-15 & J2 (J\_EPS) & Cabecera 3 pines (potencia EPS) & 1 & Genérico & Sin referencia comercial & Cabecera 3 pines \\ \hline
-16 & J3 (J\_COIL\_X) & Cabecera 2 pines (bobina X) & 1 & Genérico & Sin referencia comercial & Cabecera 2 pines \\ \hline
-17 & J4 (J\_COIL\_Y) & Cabecera 2 pines (bobina Y) & 1 & Genérico & Sin referencia comercial & Cabecera 2 pines \\ \hline
-18 & P1 (J\_PAYLOAD) & Cabecera 5 pines (SPI + DGND) & 1 & Genérico & Sin referencia comercial & Cabecera 5 pines \\ \hline
-19 & P2 (J\_CAMERA) & Cabecera 16 pines (DCMI + I2C + 3V3 + DGND) & 1 & Genérico & Sin referencia comercial & Cabecera 16 pines \\ \hline
-20 & P3 (J\_TELEM) & Cabecera 4 pines (I2C + 3V3 + DGND) & 1 & Genérico & Sin referencia comercial & Cabecera 4 pines \\ \hline
+1 & U1 & Microcontrolador ARM Cortex-M7 480 MHz, 2 MB Flash & 1 & STMicroelectronics & STM32H753IIT6 & LQFP-176 (24x24 mm) \\ \hline
+2 & *1 & Memoria eMMC 4 GB (almacenamiento no volátil) & 1 & Kingston & EMMC04G-M627-A01 & FBGA-153 \\ \hline
+3 & U6 & Memoria SDRAM 64 Mbit (4M x 16), 3,3 V (búfer) & 1 & Micron & MT48LC4M16A2P-6A & TSOP-II 54 \\ \hline
+4 & U2, U2 (Z) & Aislador digital 4 canales unidireccionales, 5 kVrms & 2 & Texas Instruments & ISO7740DWR & SOIC-16 DW \\ \hline
+5 & U3, U5 & Controlador puente H doble 2,7--10,8 V (Ejes X, Y, Z) & 2 & Texas Instruments & DRV8833PWPR & HTSSOP-16 (PowerPAD) \\ \hline
+6 & U7 & Unidad Medición Inercial 9-DoF (Acel+Giro+Mag) & 1 & STMicroelectronics & LSM9DS1TR & LGA-24 (3,5 x 3,0 mm) \\ \hline
+7 & D1--D6 & Fotodiodos PIN de silicio (Coarse Sun Sensors) & 6 & Vishay & VEMD5080X01 & SMD 5,0 x 4,0 mm \\ \hline
+8 & U3, U4 (Sun) & Amplificador operacional cuádruple RRIO (TIA) & 2 & Texas Instruments & OPA4340UA & SOIC-14 \\ \hline
+9 & U8 & Regulador LDO ultra bajo Iq 3,3 V / 150 mA (V\_BATT) & 1 & Texas Instruments & TLV70433DBVR & SOT-23-5 \\ \hline
+10 & Y1 & Cristal 25 MHz (oscilador HSE del MCU) & 1 & Abracon & ABM3B-25.000MHZ-B4U-T & SMD 5,0 x 3,2 mm (4 pines) \\ \hline
+11 & C1, C6 & Condensador cerámico 0,1 uF X7R 16 V (Reset y filtrado) & 2 & Murata & GRM155R71C104KA88D & 0402 \\ \hline
+12 & C9 & Condensador cerámico 0,1 uF 16 V (C1 de LSM9DS1) & 1 & Murata & GRM155R71C104KA88D & 0402 \\ \hline
+13 & C8 & Condensador cerámico 10 nF 16 V (CAP de LSM9DS1) & 1 & Kemet & C0402C103K4RAC & 0402 \\ \hline
+14 & C10, C11 & Condensador cerámico 1 uF X7R 16 V (Desacoplo LDO) & 2 & Murata & GRM188R71C105KA12D & 0603 \\ \hline
+15 & C2, C5 & Condensador cerámico 16 pF C0G (Carga HSE) & 2 & Murata & GJM1555C1H160JB01D & 0402 \\ \hline
+16 & C3, C4 & Condensador cerámico 2,2 uF (VCAP de STM32) & 2 & Murata & GRM188R71E225KE11D & 0603 \\ \hline
+17 & C7 & Condensador cerámico 10 uF X7R 16 V (Filtrado J\_EPS) & 1 & Murata & GRM21BR71C106KE15L & 0805 \\ \hline
+18 & R1 & Resistencia 10 kOhm 1 \% (Configuración BOOT0) & 1 & Panasonic & ERJ3EKF1002V & 0603 \\ \hline
+19 & R6, R7 & Resistencia 4,7 kOhm 1 \% (Pull-up Telemetría I2C) & 2 & Panasonic & ERJ3EKF4701V & 0603 \\ \hline
+20 & R8, R9 & Resistencia 4,7 kOhm 1 \% (Pull-up IMU I2C) & 2 & Panasonic & ERJ3EKF4701V & 0603 \\ \hline
+21 & R2--R5 & Resistencia serie 33 Ohm 1 \% (Amortiguamiento SPI) & 4 & Panasonic & ERJ3EKF33R0V & 0603 \\ \hline
+22 & R10--R15 & Resistencia 1,0 kOhm 0,1 \% (Realimentación TIA) & 6 & Susumu & RR0816P-102-D & 0603 \\ \hline
+23 & J1 & Cabecera 4 pines 3,5 mm SWD & 1 & Molex & 53259-0429 & THT acodada 3,5 mm \\ \hline
+24 & J2 (J\_EPS) & Cabecera 3 pines (potencia lógica EPS) & 1 & Genérico & Cabecera 3 pines 2,54 mm & Cabecera 3 pines \\ \hline
+25 & J6 (J\_EPS\_LCL) & Cabecera 2 pines (V\_BATT actuadores + GPIO\_EN) & 1 & Genérico & Cabecera 2 pines 2,54 mm & Cabecera 2 pines \\ \hline
+26 & J3 (J\_COIL\_X) & Cabecera 2 pines (bobina magnetorquer eje X) & 1 & Genérico & Cabecera 2 pines 2,54 mm & Cabecera 2 pines \\ \hline
+27 & J4 (J\_COIL\_Y) & Cabecera 2 pines (bobina magnetorquer eje Y) & 1 & Genérico & Cabecera 2 pines 2,54 mm & Cabecera 2 pines \\ \hline
+28 & J5 (J\_COIL\_Z) & Cabecera 2 pines (bobina magnetorquer eje Z) & 1 & Genérico & Cabecera 2 pines 2,54 mm & Cabecera 2 pines \\ \hline
+29 & P1 (J\_PAYLOAD) & Cabecera 5 pines (SPI hacia Payload / COMM) & 1 & Genérico & Cabecera 5 pines 2,54 mm & Cabecera 5 pines \\ \hline
+30 & P2 (J\_CAMERA) & Cabecera 16 pines (DCMI + I2C cámara) & 1 & Genérico & Cabecera 16 pines 1,27 mm & Cabecera 16 pines \\ \hline
+31 & P3 (J\_TELEM) & Cabecera 4 pines (I2C telemetría + 3V3 + DGND) & 1 & Genérico & Cabecera 4 pines 2,54 mm & Cabecera 4 pines \\ \hline
 \end{longtable}
 \normalsize

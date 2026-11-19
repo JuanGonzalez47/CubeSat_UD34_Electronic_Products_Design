@@ -50,15 +50,15 @@ Configuration2_Name1=General
 Configuration2_Item1=TemplateFilename=Board Stack Report.XLT
 
 [PublishSettings]
-OutputFilePath2=C:\Users\casta\Downloads\.PDF
+OutputFilePath2=C:\Users\casta\Desktop\Ing.Electronica_UdeA\Semestre9\Diseño_de_productos_electronicos\GitHub\CubeSat_UD34_Electronic_Products_Design\Lab04\PDF_Esquematicos\.PDF
 ReleaseManaged2=0
-OutputBasePath2=C:\Users\casta\Downloads
+OutputBasePath2=C:\Users\casta\Desktop\Ing.Electronica_UdeA\Semestre9\Diseño_de_productos_electronicos\GitHub\CubeSat_UD34_Electronic_Products_Design\Lab04\PDF_Esquematicos
 OutputPathMedia2=
 OutputPathMediaValue2=
 OutputPathOutputer2=[Output Type]
 OutputPathOutputerPrefix2=
 OutputPathOutputerValue2=
-OutputFileName2=Esquematico_P4.pdf
+OutputFileName2=PCB2_OBC_ADCS.pdf
 OutputFileNameMulti2=
 UseOutputNameForMulti2=1
 OutputFileNameSpecial2=
@@ -129,7 +129,7 @@ WmvVideoCodecName4=Windows Media Video V7
 WmvQuality4=80
 
 [GeneratedFilesSettings]
-RelativeOutputPath2=C:\Users\casta\Downloads\.PDF
+RelativeOutputPath2=C:\Users\casta\Desktop\Ing.Electronica_UdeA\Semestre9\Diseño_de_productos_electronicos\GitHub\CubeSat_UD34_Electronic_Products_Design\Lab04\PDF_Esquematicos\.PDF
 OpenOutputs2=1
 RelativeOutputPath3=
 OpenOutputs3=1

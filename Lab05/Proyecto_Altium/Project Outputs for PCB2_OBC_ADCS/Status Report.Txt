@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [PCB2_OBC_ADCS_asistida.PcbDoc]
+   Generated File[PCB2_OBC_ADCS_asistida.TXT]
+   Generated File[PCB2_OBC_ADCS_asistida.LDP]
+   Generated File[PCB2_OBC_ADCS_asistida.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 12:16:05 a. m. On 27/11/2026
